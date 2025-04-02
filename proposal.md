@@ -5,19 +5,19 @@
 Monster Quest
 ## In just a sentence or two, summarize your project. (E.g., "A website that lets you buy and sell stocks.")
 
-A Python-based text adventure RPG in the style of Pokemon
+This is a text-based roguelike adventure game inspired by Pokémon.
 
 ## In a paragraph or more, detail your project. What will your software do? What features will it have? How will it be executed?
 
-This project is a Python-based text adventure RPG, similar to Pokémon. Players will play the role of monster trainers, explore and capture monsters in the area, and engage in turn-based battles. The game supports map movement, monster capture, item management, etc.
+My final project will be a text-based roguelike monster-catching adventure game inspired by classic RPGs like Pokémon.As the player explores, they can encounter and attempt to catch monsters, each with randomly generated stats, elemental types, and simple attack moves. 
 
 ## If planning to combine 1051's final project with another course's final project, with which other course? And which aspect(s) of your proposed project would relate to 1051, and which aspect(s) would relate to the other course?
 
-TODO, if applicable
+
 
 ## If planning to collaborate with 1 or 2 classmates for the final project, list their names, email addresses, and the names of their assigned TAs below.
 
-Just my self
+Just myself
 
 ## In the world of software, most everything takes longer to implement than you expect. And so it's not uncommon to accomplish less in a fixed amount of time than you hope.
 

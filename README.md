@@ -20,10 +20,3 @@ Key Features
 
  Items & Shops: Simple item use and economy
 
-Tools and Libraries
-Python 3
-
-Standard libraries 
-
-Optionally: pygame for future graphical interface
-

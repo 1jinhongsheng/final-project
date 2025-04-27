@@ -1,6 +1,4 @@
 import random
-
-# ===== 读取怪物数据 =====
 def load_monsters():
     monsters = []
     with open("monsters.txt", "r", encoding="utf-8") as f:
@@ -10,11 +8,9 @@ def load_monsters():
             if len(parts) != 3:
                 continue
             name, mtype, hp = parts
-            monster = {"name": name, "type": mtype, "hp": int(hp), "attack": 10, "max_hp": int(hp)}
+            monster = {"name": name, "type": mtype, "hp": int(hp),  "max_hp": int(hp)}
             monsters.append(monster)
     return monsters
-
-# ===== 初始宝可梦选择 =====
 def choose_starter():
     starters = [
         {"name": "Ignibra", "type": "Fire", "hp": 40, "attack": 10, "max_hp": 40},
@@ -24,8 +20,6 @@ def choose_starter():
     starter = random.choice(starters)
     print("You got:", starter["name"])
     return starter
-
-# ===== 属性相克判断 =====
 def is_effective(attacker, defender):
     return (attacker == "Water" and defender == "Fire") or \
            (attacker == "Fire" and defender == "Grass") or \
@@ -34,7 +28,6 @@ def is_effective(attacker, defender):
 def is_weak(attacker, defender):
     return is_effective(defender, attacker)
 
-# ===== 楼层怪物生成 =====
 def get_monsters_for_level(level, all_monsters):
     if level <= 5:
         return random.sample(all_monsters, 1)
@@ -46,8 +39,6 @@ def get_monsters_for_level(level, all_monsters):
         return random.sample(all_monsters, 4)
     else:
         return [{"name": "Monster Pillar", "type": "Fire", "hp": 200, "attack": 25, "max_hp": 200}]
-
-# ===== 战斗系统 =====
 def battle(team, enemy, items):
     while len(team) > 0 and enemy["hp"] > 0:
         player = team[0]
@@ -132,8 +123,6 @@ def battle(team, enemy, items):
             team.pop(0)
 
     return enemy["hp"] <= 0
-
-# ===== 单局游戏逻辑 =====
 def run_game():
     monsters = load_monsters()
     team = [choose_starter()]
@@ -178,13 +167,9 @@ def run_game():
             else:
                 print("No reward.")
     return True
-
-# ===== 主流程循环 =====
 def play_game():
     while True:
         success = run_game()
         if success:
             break
-
-# ===== 启动游戏 =====
 play_game()

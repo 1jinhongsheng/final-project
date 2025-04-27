@@ -1,0 +1,219 @@
+import pygame
+import random
+
+pygame.init()
+WIDTH, HEIGHT = 800, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Tower Battle")
+clock = pygame.time.Clock()
+font = pygame.font.SysFont(None, 30)
+
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GRAY = (180, 180, 180)
+
+def load_image(name):
+    try:
+        img = pygame.image.load(f"images/{name}.png")
+        img = pygame.transform.scale(img, (100, 100))
+        return img
+    except:
+        return None
+
+monsters_data = [
+    ("AQUABUB", "Water", 40), ("DROPLASH", "Water", 50), ("EMBEROX", "Fire", 45),
+    ("FLAMYRO", "Fire", 50), ("GLACOON", "Water", 45), ("LEAFAWN", "Grass", 40),
+    ("SPRIGUP", "Grass", 50), ("THORNIX", "Grass", 55), ("VOLKIDO", "Fire", 55)
+]
+
+monsters = []
+for name, mtype, hp in monsters_data:
+    monsters.append({"name": name, "type": mtype, "hp": hp, "max_hp": hp, "image": load_image(name)})
+
+boss = {"name": "Monster Pillar", "type": "Fire", "hp": 100, "max_hp": 100, "image": load_image("boss")}
+
+player = random.choice([
+    {"name": "GLACOON", "type": "Water", "hp": 45, "max_hp": 45, "image": load_image("GLACOON")},
+    {"name": "SPRIGUP", "type": "Grass", "hp": 50, "max_hp": 50, "image": load_image("SPRIGUP")},
+    {"name": "AQUABUB", "type": "Water", "hp": 40, "max_hp": 40, "image": load_image("AQUABUB")}
+])
+team = [player]
+max_team_size = 6
+
+enemy = random.choice(monsters)
+reward = False
+floor = 1
+items = []
+logs = []
+result = None
+
+def draw_text(text, x, y):
+    screen.blit(font.render(text, True, BLACK), (x, y))
+
+def is_effective(att, defn):
+    return (att == "Water" and defn == "Fire") or (att == "Fire" and defn == "Grass") or (att == "Grass" and defn == "Water")
+
+def is_weak(att, defn):
+    return is_effective(defn, att)
+
+def attack():
+    global reward
+    if result or reward: return
+    damage = team[0]['max_hp'] // 8
+    if "sword" in items:
+        damage *= 2
+        items.remove("sword")
+        logs.append("Sword used!")
+    enemy['hp'] -= damage
+    logs.append(f"Attack! Damage {damage}")
+    check_battle()
+    if not reward: enemy_turn()
+
+def special():
+    global reward
+    if result or reward: return
+    if is_effective(team[0]['type'], enemy['type']):
+        damage = team[0]['max_hp'] // 4
+        logs.append("Super Effective!")
+    elif is_weak(team[0]['type'], enemy['type']):
+        damage = (team[0]['max_hp'] // 6) // 2
+        logs.append("Not very Effective...")
+    else:
+        damage = team[0]['max_hp'] // 6
+    if "sword" in items:
+        damage *= 2
+        items.remove("sword")
+        logs.append("Sword used!")
+    enemy['hp'] -= damage
+    logs.append(f"Special! Damage {damage}")
+    check_battle()
+    if not reward: enemy_turn()
+
+def defend():
+    global defended
+    if result or reward: return
+    defended = True
+    logs.append("Defending!")
+    enemy_turn()
+
+def enemy_turn():
+    global result
+    if not team: return
+    dmg = enemy['max_hp'] // 8
+    if enemy['name'] == "Monster Pillar" and enemy['hp'] < enemy['max_hp'] * 0.2:
+        dmg = enemy['max_hp'] // 4
+        logs.append("Boss special attack!")
+    if defended:
+        dmg //= 2
+    if "shield" in items:
+        dmg //= 2
+        items.remove("shield")
+        logs.append("Shield used!")
+    team[0]['hp'] -= dmg
+    logs.append(f"Enemy attacks! Damage {dmg}")
+    if team[0]['hp'] <= 0:
+        logs.append(f"{team[0]['name']} fainted!")
+        team.pop(0)
+        if not team:
+            logs.append("Game Over!")
+            result = "lose"
+        else:
+            logs.append(f"Switch to {team[0]['name']}")
+
+def check_battle():
+    global reward, result
+    if enemy['hp'] <= 0:
+        enemy['hp'] = 0
+        logs.append(f"Defeated {enemy['name']}!")
+        if enemy['name'] == "Monster Pillar":
+            result = "win"
+            logs.append("Victory!")
+        reward = True
+
+def next_floor():
+    global enemy, floor, reward
+    floor += 1
+    if floor == 20:
+        enemy = boss.copy()
+    else:
+        enemy = random.choice(monsters)
+        enemy['hp'] = enemy['max_hp']
+    if team:
+        team[0]['hp'] = team[0]['max_hp']
+    reward = False
+
+def capture():
+    if len(team) < max_team_size:
+        team.append({"name": enemy['name'], "type": enemy['type'], "hp": enemy['max_hp'], "max_hp": enemy['max_hp'], "image": enemy['image']})
+        logs.append(f"Captured {enemy['name']}!")
+    else:
+        logs.append("Team full!")
+    reward = "next"
+
+def get_item():
+    item = random.choice(["sword", "shield"])
+    items.append(item)
+    logs.append(f"Got {item}!")
+    reward = "next"
+
+buttons = []
+
+def make_button(text, x, y, func):
+    buttons.append((pygame.Rect(x, y, 150, 40), text, func))
+
+make_button("Attack", 100, 500, attack)
+make_button("Special", 300, 500, special)
+make_button("Defend", 500, 500, defend)
+make_button("Capture", 200, 400, capture)
+make_button("Item", 450, 400, get_item)
+make_button("Next Floor", 325, 450, next_floor)
+
+defended = False
+run = True
+while run:
+    screen.fill(WHITE)
+    for e in pygame.event.get():
+        if e.type == pygame.QUIT:
+            run = False
+        if e.type == pygame.MOUSEBUTTONDOWN:
+            for r, t, f in buttons:
+                if r.collidepoint(e.pos):
+                    if result: continue
+                    if reward == True and t in ["Attack", "Special", "Defend"]:
+                        continue
+                    if reward == "next" and t not in ["Next Floor"]:
+                        continue
+                    if not reward and t in ["Capture", "Item", "Next Floor"]:
+                        continue
+                    defended = False
+                    f()
+
+    draw_text(f"Floor {floor}", 20, 20)
+    if team:
+        p = team[0]
+        draw_text(f"Player: {p['name']} {p['type']} HP:{p['hp']}", 20, 60)
+        if p['image']:
+            screen.blit(p['image'], (600, 50))
+    if enemy:
+        draw_text(f"Enemy: {enemy['name']} {enemy['type']} HP:{enemy['hp']}", 20, 100)
+        if enemy['image']:
+            screen.blit(enemy['image'], (600, 200))
+
+    y = 150
+    for line in logs[-6:]:
+        draw_text(line, 20, y)
+        y += 30
+
+    for r, t, f in buttons:
+        pygame.draw.rect(screen, GRAY, r)
+        draw_text(t, r.x + 10, r.y + 10)
+
+    if result == "win":
+        draw_text("YOU WIN!", WIDTH//2 - 50, HEIGHT//2)
+    if result == "lose":
+        draw_text("YOU LOSE!", WIDTH//2 - 50, HEIGHT//2)
+
+    pygame.display.update()
+    clock.tick(60)
+
+pygame.quit()

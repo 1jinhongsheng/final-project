@@ -87,7 +87,7 @@ def choose_reward(capture):
     if capture:
         if len(team) < max_team_size:
             new_mon = enemy.copy()
-            new_mon["hp"] = new_mon["max_hp"]  # 捕捉后自动回血
+            new_mon["hp"] = new_mon["max_hp"]  
             team.append(new_mon)
             log.append(f"You captured {enemy['name']}!")
         else:

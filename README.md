@@ -1,30 +1,30 @@
-Project Title:
+Project Title
 Monster Quest
 
-Team Members:
+Team Members
 Jinhong Sheng - Spring 2025
 
-Project Description:
+Project Description
 The player will get a random monster at the beginning, and then encounter random monsters on each floor, and can capture or obtain props after defeating them. After reaching the 20th floor, you will fight the boss.
 
 The game includes:
 - Monster Encounter and Capture System
 - Items, and Random Events
 
-Key Features:
+Key Features
 - Monster System: Random monsters with stats, types, and skills
 
-Challenges Encountered:
-I had difficulty implementing the monster encounter system and ensuring the random generation was balanced.
-It was challenging to handle the logic for special attacks and elemental effectiveness.
+Challenges Encountered
+I had difficulty implementing the monster encounter system and ensuring the random generation was balanced.  
+It was challenging to handle the logic for special attacks and elemental effectiveness.  
 Integrating images and fixing bugs related to game crashes took longer than expected.
 
-What I Learned:
+What I Learned
 - How to use Pygame for interactive games.
 - How to use lists to store data.
 - How to manage game loops, events, and user input.
 - How to plan and structure a game project from start to finish.
 
- Video Link:
-[Watch the project demo video here](https://youtu.be/LsCRSjeZm5Y)
+Video Link
+[Watch the project demo video here](https://youtu.be/ICcJQLrclFA)
 
